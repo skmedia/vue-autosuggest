@@ -291,7 +291,7 @@ export default {
         `.${this.component_attr_class_autosuggest__results}`
       );
 
-      if (!item || (!index && index !== 0) || !resultsScrollElement) {
+      if (!item || (!index && index !== 0) || !resultsScrollElement || typeof resultsScrollElement === 'undefined') {
         return;
       }
 
@@ -306,18 +306,22 @@ export default {
       const itemHeight = itemElement.clientHeight;
       const currentItemScrollOffset = itemElement.offsetTop;
 
-      if (
-        itemHeight + currentItemScrollOffset >=
-        resultsScrollScrollTop + resultsScrollWindowHeight
-      ) {
-        /** Current item goes below visible scroll window */
-        resultsScrollElement.scrollTo(
-          0,
-          itemHeight + currentItemScrollOffset - resultsScrollWindowHeight
-        );
-      } else if (currentItemScrollOffset < resultsScrollScrollTop && resultsScrollScrollTop > 0) {
-        /** Current item goes above visible scroll window */
-        resultsScrollElement.scrollTo(0, currentItemScrollOffset);
+      try {
+        if (
+          itemHeight + currentItemScrollOffset >=
+          resultsScrollScrollTop + resultsScrollWindowHeight
+        ) {
+          /** Current item goes below visible scroll window */
+          resultsScrollElement.scrollTo(
+            0,
+            itemHeight + currentItemScrollOffset - resultsScrollWindowHeight
+          );
+        } else if (currentItemScrollOffset < resultsScrollScrollTop && resultsScrollScrollTop > 0) {
+          /** Current item goes above visible scroll window */
+          resultsScrollElement.scrollTo(0, currentItemScrollOffset);
+        }
+      } catch (e) {
+        // ignore error
       }
     },
     updateCurrentIndex(index) {
